@@ -431,10 +431,10 @@ def worker(store):
     print("common_end_datetime_utc: " + str(common_end_datetime_utc))
 
     ####################################################################################################################
-    # Step 9: aggregate energy data in the common time slot by energy categories and hourly
+    # Step 9: aggregate energy data in the common time slot by energy items and hourly
     ####################################################################################################################
 
-    print("Step 9: aggregate energy data in the common time slot by energy categories and hourly")
+    print("Step 9: aggregate energy data in the common time slot by energy items and hourly")
     aggregated_values = list()
     try:
         current_datetime_utc = common_start_datetime_utc
