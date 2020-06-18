@@ -27,7 +27,7 @@ myems_billing_db = {
 }
 
 
-# indicates in how many minutes to calculate meter energy consumption
+# indicates in how many minutes to aggregate energy data
 # 30 for half hourly
 # 60 for hourly
 minutes_to_count = 60

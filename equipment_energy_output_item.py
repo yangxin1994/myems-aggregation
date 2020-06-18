@@ -92,9 +92,9 @@ def main(logger):
 #   Step 2: get all output virtual meters associated with the equipment
 #   Step 3: get all output offline meters associated with the equipment
 #   Step 4: determine start datetime and end datetime to aggregate
-#   Step 5: for each meter in list, get energy consumption data from energy database
-#   Step 6: for each virtual meter in list, get energy consumption data from energy database
-#   Step 7: for each offline meter in list, get energy consumption data from energy database
+#   Step 5: for each meter in list, get energy output data from energy database
+#   Step 6: for each virtual meter in list, get energy output data from energy database
+#   Step 7: for each offline meter in list, get energy output data from energy database
 #   Step 8: determine common time slot to aggregate
 #   Step 9: aggregate energy data in the common time slot by energy items and hourly
 #   Step 10: save energy data to energy database
@@ -273,7 +273,7 @@ def worker(equipment):
         return error_string
 
     ####################################################################################################################
-    # Step 5: for each meter in list, get energy consumption data from energy database
+    # Step 5: for each meter in list, get energy output data from energy database
     ####################################################################################################################
     energy_meter_hourly = dict()
     try:
@@ -305,7 +305,7 @@ def worker(equipment):
         return error_string
 
     ####################################################################################################################
-    # Step 6: for each virtual meter in list, get energy consumption data from energy database
+    # Step 6: for each virtual meter in list, get energy output data from energy database
     ####################################################################################################################
     energy_virtual_meter_hourly = dict()
     if virtual_meter_list is not None and len(virtual_meter_list) > 0:
@@ -337,7 +337,7 @@ def worker(equipment):
             return error_string
 
     ####################################################################################################################
-    # Step 7: for each offline meter in list, get energy consumption data from energy database
+    # Step 7: for each offline meter in list, get energy output data from energy database
     ####################################################################################################################
     energy_offline_meter_hourly = dict()
     if offline_meter_list is not None and len(offline_meter_list) > 0:
