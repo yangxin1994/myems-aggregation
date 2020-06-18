@@ -7,6 +7,7 @@ import equipment_energy_input_item
 import equipment_energy_output_category
 import equipment_energy_output_item
 import tenant_energy_input_category
+import tenant_energy_input_item
 
 
 def main():
@@ -36,6 +37,8 @@ def main():
     Process(target=equipment_energy_output_item.main, args=(logger,)).start()
     # tenant energy input by energy categories
     Process(target=tenant_energy_input_category.main, args=(logger,)).start()
+    # tenant energy input by energy items
+    Process(target=tenant_energy_input_item.main, args=(logger,)).start()
 
 
 if __name__ == '__main__':
