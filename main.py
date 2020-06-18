@@ -6,6 +6,7 @@ import equipment_energy_input_category
 import equipment_energy_input_item
 import equipment_energy_output_category
 import equipment_energy_output_item
+import tenant_energy_input_category
 
 
 def main():
@@ -25,14 +26,16 @@ def main():
     # add the handlers to logger
     logger.addHandler(fh)
 
-    # energy input by energy categories
+    # equipment energy input by energy categories
     Process(target=equipment_energy_input_category.main, args=(logger,)).start()
-    # energy input by energy items
+    # equipment energy input by energy items
     Process(target=equipment_energy_input_item.main, args=(logger,)).start()
-    # energy output by energy categories
+    # equipment energy output by energy categories
     Process(target=equipment_energy_output_category.main, args=(logger,)).start()
-    # energy output by energy items
+    # equipment energy output by energy items
     Process(target=equipment_energy_output_item.main, args=(logger,)).start()
+    # tenant energy input by energy categories
+    Process(target=tenant_energy_input_category.main, args=(logger,)).start()
 
 
 if __name__ == '__main__':
