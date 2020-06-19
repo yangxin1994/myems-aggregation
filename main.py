@@ -8,6 +8,7 @@ import equipment_energy_output_category
 import equipment_energy_output_item
 import space_energy_input_category
 import space_energy_input_item
+import space_energy_output_category
 import store_energy_input_category
 import store_energy_input_item
 import tenant_energy_input_category
@@ -43,6 +44,8 @@ def main():
     Process(target=space_energy_input_category.main, args=(logger,)).start()
     # space energy input by energy items
     Process(target=space_energy_input_item.main, args=(logger,)).start()
+    # space energy output by energy categories
+    Process(target=space_energy_output_category.main, args=(logger,)).start()
     # store energy input by energy categories
     Process(target=store_energy_input_category.main, args=(logger,)).start()
     # store energy input by energy items

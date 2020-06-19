@@ -116,7 +116,6 @@ def worker(space):
     ####################################################################################################################
     print("Step 1: get all input meters associated with the space " + str(space['name']))
 
-    meter_list = list()
     cnx_system_db = None
     cursor_system_db = None
     try:
@@ -131,6 +130,7 @@ def worker(space):
         print(error_string)
         return error_string
 
+    meter_list = list()
     try:
         cursor_system_db.execute(" SELECT m.id, m.name, m.energy_category_id "
                                  " FROM tbl_meters m, tbl_spaces_meters sm "
@@ -177,7 +177,7 @@ def worker(space):
                                            "energy_category_id": row[2]})
 
     except Exception as e:
-        error_string = "Error in step 2.1 of space_energy_input_category.worker " + str(e)
+        error_string = "Error in step 2 of space_energy_input_category.worker " + str(e)
         if cursor_system_db:
             cursor_system_db.close()
         if cnx_system_db:
@@ -208,7 +208,7 @@ def worker(space):
                                            "energy_category_id": row[2]})
 
     except Exception as e:
-        error_string = "Error in step 3.1 of space_energy_input_category.worker " + str(e)
+        error_string = "Error in step 3 of space_energy_input_category.worker " + str(e)
         print(error_string)
         return error_string
     finally:
@@ -239,7 +239,7 @@ def worker(space):
                                        "name": row[1]})
 
     except Exception as e:
-        error_string = "Error in step 4.1 of space_energy_input_category.worker " + str(e)
+        error_string = "Error in step 4 of space_energy_input_category.worker " + str(e)
         print(error_string)
         return error_string
     finally:
@@ -270,7 +270,7 @@ def worker(space):
                                    "name": row[1]})
 
     except Exception as e:
-        error_string = "Error in step 5.1 of space_energy_input_category.worker " + str(e)
+        error_string = "Error in step 5 of space_energy_input_category.worker " + str(e)
         print(error_string)
         return error_string
     finally:
@@ -301,7 +301,7 @@ def worker(space):
                                     "name": row[1]})
 
     except Exception as e:
-        error_string = "Error in step 6.1 of space_energy_input_category.worker " + str(e)
+        error_string = "Error in step 6 of space_energy_input_category.worker " + str(e)
         print(error_string)
         return error_string
     finally:
@@ -331,7 +331,7 @@ def worker(space):
                                          "name": row[1]})
 
     except Exception as e:
-        error_string = "Error in step 7.1 of space_energy_input_category.worker " + str(e)
+        error_string = "Error in step 7 of space_energy_input_category.worker " + str(e)
         print(error_string)
         return error_string
     finally:
@@ -640,6 +640,7 @@ def worker(space):
                 cnx_energy_db.close()
             print(error_string)
             return error_string
+
     ####################################################################################################################
     # Step 16: determine common time slot to aggregate
     ####################################################################################################################
@@ -878,7 +879,7 @@ def worker(space):
             cnx_energy_db.commit()
 
         except Exception as e:
-            error_string = "Error in step 18.1 of space_energy_input_category.worker " + str(e)
+            error_string = "Error in step 18 of space_energy_input_category.worker " + str(e)
             print(error_string)
             return error_string
         finally:
