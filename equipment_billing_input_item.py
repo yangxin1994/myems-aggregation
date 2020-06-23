@@ -8,8 +8,8 @@ import config
 
 ########################################################################################################################
 # PROCEDURES
-# Step 1: get all stores
-# for each store in list:
+# Step 1: get all equipments
+# for each equipment in list:
 #   Step 2: get the latest start_datetime_utc
 #   Step 3: get all energy input data since the latest start_datetime_utc
 #   Step 4: get tariffs
@@ -23,7 +23,7 @@ def main(logger):
     while True:
         # the outermost while loop
         ################################################################################################################
-        # Step 1: get all stores
+        # Step 1: get all equipments
         ################################################################################################################
         cnx_system_db = None
         cursor_system_db = None
@@ -31,7 +31,7 @@ def main(logger):
             cnx_system_db = mysql.connector.connect(**config.myems_system_db)
             cursor_system_db = cnx_system_db.cursor()
         except Exception as e:
-            logger.error("Error in step 1.1 of store_billing_input_category " + str(e))
+            logger.error("Error in step 1.1 of equipment_billing_input_item " + str(e))
             if cursor_system_db:
                 cursor_system_db.close()
             if cnx_system_db:
@@ -44,12 +44,12 @@ def main(logger):
 
         try:
             cursor_system_db.execute(" SELECT id, name, cost_center_id "
-                                     " FROM tbl_stores "
+                                     " FROM tbl_equipments "
                                      " ORDER BY id ")
-            rows_stores = cursor_system_db.fetchall()
+            rows_equipments = cursor_system_db.fetchall()
 
-            if rows_stores is None or len(rows_stores) == 0:
-                print("Step 1.2: There isn't any stores. ")
+            if rows_equipments is None or len(rows_equipments) == 0:
+                print("Step 1.2: There isn't any equipments. ")
                 if cursor_system_db:
                     cursor_system_db.close()
                 if cnx_system_db:
@@ -58,12 +58,12 @@ def main(logger):
                 time.sleep(60)
                 continue
 
-            store_list = list()
-            for row in rows_stores:
-                store_list.append({"id": row[0], "name": row[1], "cost_center_id": row[2]})
+            equipment_list = list()
+            for row in rows_equipments:
+                equipment_list.append({"id": row[0], "name": row[1], "cost_center_id": row[2]})
 
         except Exception as e:
-            logger.error("Error in step 1.2 of store_billing_input_category " + str(e))
+            logger.error("Error in step 1.2 of equipment_billing_input_item " + str(e))
             if cursor_system_db:
                 cursor_system_db.close()
             if cnx_system_db:
@@ -72,7 +72,7 @@ def main(logger):
             time.sleep(60)
             continue
 
-        print("Step 1.2: Got all stores from MyEMS System Database")
+        print("Step 1.2: Got all equipments from MyEMS System Database")
 
         cnx_energy_db = None
         cursor_energy_db = None
@@ -80,7 +80,7 @@ def main(logger):
             cnx_energy_db = mysql.connector.connect(**config.myems_energy_db)
             cursor_energy_db = cnx_energy_db.cursor()
         except Exception as e:
-            logger.error("Error in step 1.3 of store_billing_input_category " + str(e))
+            logger.error("Error in step 1.3 of equipment_billing_input_item " + str(e))
             if cursor_energy_db:
                 cursor_energy_db.close()
             if cnx_energy_db:
@@ -102,7 +102,7 @@ def main(logger):
             cnx_billing_db = mysql.connector.connect(**config.myems_billing_db)
             cursor_billing_db = cnx_billing_db.cursor()
         except Exception as e:
-            logger.error("Error in step 1.4 of store_billing_input_category " + str(e))
+            logger.error("Error in step 1.4 of equipment_billing_input_item " + str(e))
             if cursor_billing_db:
                 cursor_billing_db.close()
             if cnx_billing_db:
@@ -123,17 +123,17 @@ def main(logger):
 
         print("Connected to MyEMS Billing Database")
 
-        for store in store_list:
+        for equipment in equipment_list:
 
             ############################################################################################################
             # Step 2: get the latest start_datetime_utc
             ############################################################################################################
-            print("Step 2: get the latest start_datetime_utc from billing database for " + store['name'])
+            print("Step 2: get the latest start_datetime_utc from billing database for " + equipment['name'])
             try:
                 cursor_billing_db.execute(" SELECT MAX(start_datetime_utc) "
-                                          " FROM tbl_store_input_category_hourly "
-                                          " WHERE store_id = %s ",
-                                          (store['id'], ))
+                                          " FROM tbl_equipment_input_item_hourly "
+                                          " WHERE equipment_id = %s ",
+                                          (equipment['id'], ))
                 row_datetime = cursor_billing_db.fetchone()
                 start_datetime_utc = datetime.strptime(config.start_datetime_utc, '%Y-%m-%d %H:%M:%S')
                 start_datetime_utc = start_datetime_utc.replace(minute=0, second=0, microsecond=0, tzinfo=None)
@@ -147,8 +147,8 @@ def main(logger):
 
                 print("start_datetime_utc: " + start_datetime_utc.isoformat())
             except Exception as e:
-                logger.error("Error in step 2 of store_billing_input_category " + str(e))
-                # break the for store loop
+                logger.error("Error in step 2 of equipment_billing_input_item " + str(e))
+                # break the for equipment loop
                 break
 
             ############################################################################################################
@@ -156,32 +156,32 @@ def main(logger):
             ############################################################################################################
             print("Step 3: get all energy input data since the latest start_datetime_utc")
 
-            query = (" SELECT start_datetime_utc, energy_category_id, actual_value "
-                     " FROM tbl_store_input_category_hourly "
-                     " WHERE store_id = %s AND start_datetime_utc >= %s "
+            query = (" SELECT start_datetime_utc, energy_item_id, actual_value "
+                     " FROM tbl_equipment_input_item_hourly "
+                     " WHERE equipment_id = %s AND start_datetime_utc >= %s "
                      " ORDER BY id ")
-            cursor_energy_db.execute(query, (store['id'], start_datetime_utc, ))
+            cursor_energy_db.execute(query, (equipment['id'], start_datetime_utc, ))
             rows_hourly = cursor_energy_db.fetchall()
 
             if rows_hourly is None or len(rows_hourly) == 0:
                 print("Step 3: There isn't any energy input data to calculate. ")
-                # continue the for store loop
+                # continue the for equipment loop
                 continue
 
             energy_dict = dict()
-            energy_category_list = list()
+            energy_item_list = list()
             end_datetime_utc = start_datetime_utc
             for row_hourly in rows_hourly:
                 current_datetime_utc = row_hourly[0]
-                energy_category_id = row_hourly[1]
+                energy_item_id = row_hourly[1]
 
-                if energy_category_id not in energy_category_list:
-                    energy_category_list.append(energy_category_id)
+                if energy_item_id not in energy_item_list:
+                    energy_item_list.append(energy_item_id)
 
                 actual_value = row_hourly[2]
                 if energy_dict.get(current_datetime_utc) is None:
                     energy_dict[current_datetime_utc] = dict()
-                energy_dict[current_datetime_utc][energy_category_id] = actual_value
+                energy_dict[current_datetime_utc][energy_item_id] = actual_value
                 if current_datetime_utc > end_datetime_utc:
                     end_datetime_utc = current_datetime_utc
 
@@ -190,11 +190,11 @@ def main(logger):
             ############################################################################################################
             print("Step 4: get tariffs")
             tariff_dict = dict()
-            for energy_category_id in energy_category_list:
-                tariff_dict[energy_category_id] = tariff.get_energy_category_tariffs(store['cost_center_id'],
-                                                                                     energy_category_id,
-                                                                                     start_datetime_utc,
-                                                                                     end_datetime_utc)
+            for energy_item_id in energy_item_list:
+                tariff_dict[energy_item_id] = tariff.get_energy_item_tariffs(equipment['cost_center_id'],
+                                                                             energy_item_id,
+                                                                             start_datetime_utc,
+                                                                             end_datetime_utc)
             ############################################################################################################
             # Step 5: calculate billing by multiplying energy with tariff
             ############################################################################################################
@@ -204,14 +204,14 @@ def main(logger):
             if len(energy_dict) > 0:
                 for current_datetime_utc in energy_dict.keys():
                     billing_dict[current_datetime_utc] = dict()
-                    for energy_category_id in energy_category_list:
-                        current_tariff = tariff_dict[energy_category_id].get(current_datetime_utc)
-                        current_energy = energy_dict[current_datetime_utc].get(energy_category_id)
+                    for energy_item_id in energy_item_list:
+                        current_tariff = tariff_dict[energy_item_id].get(current_datetime_utc)
+                        current_energy = energy_dict[current_datetime_utc].get(energy_item_id)
                         if current_tariff is not None \
                                 and isinstance(current_tariff, float) \
                                 and current_energy is not None \
                                 and isinstance(current_energy, float):
-                            billing_dict[current_datetime_utc][energy_category_id] = \
+                            billing_dict[current_datetime_utc][energy_item_id] = \
                                 current_energy * current_tariff
 
                     if len(billing_dict[current_datetime_utc]) == 0:
@@ -224,31 +224,31 @@ def main(logger):
 
             if len(billing_dict) > 0:
                 try:
-                    add_values = (" INSERT INTO tbl_store_input_category_hourly "
-                                  "             (store_id, "
-                                  "              energy_category_id, "
+                    add_values = (" INSERT INTO tbl_equipment_input_item_hourly "
+                                  "             (equipment_id, "
+                                  "              energy_item_id, "
                                   "              start_datetime_utc, "
                                   "              actual_value) "
                                   " VALUES  ")
 
                     for current_datetime_utc in billing_dict:
-                        for energy_category_id in energy_category_list:
-                            current_billing = billing_dict[current_datetime_utc].get(energy_category_id)
+                        for energy_item_id in energy_item_list:
+                            current_billing = billing_dict[current_datetime_utc].get(energy_item_id)
                             if current_billing is not None and isinstance(current_billing, float):
-                                add_values += " (" + str(store['id']) + ","
-                                add_values += " " + str(energy_category_id) + ","
+                                add_values += " (" + str(equipment['id']) + ","
+                                add_values += " " + str(energy_item_id) + ","
                                 add_values += "'" + current_datetime_utc.isoformat() + "',"
-                                add_values += str(billing_dict[current_datetime_utc][energy_category_id]) + "), "
+                                add_values += str(billing_dict[current_datetime_utc][energy_item_id]) + "), "
                     print("add_values:" + add_values)
                     # trim ", " at the end of string and then execute
                     cursor_billing_db.execute(add_values[:-2])
                     cnx_billing_db.commit()
                 except Exception as e:
-                    logger.error("Error in step 6 of store_billing_input_category " + str(e))
-                    # break the for store loop
+                    logger.error("Error in step 6 of equipment_billing_input_item " + str(e))
+                    # break the for equipment loop
                     break
 
-        # end of for store loop
+        # end of for equipment loop
         if cnx_system_db:
             cnx_system_db.close()
         if cursor_system_db:
