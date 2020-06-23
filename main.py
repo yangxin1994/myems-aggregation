@@ -15,6 +15,7 @@ import space_energy_input_item
 import space_energy_output_category
 import space_energy_output_item
 import store_billing_input_category
+import store_billing_input_item
 import store_energy_input_category
 import store_energy_input_item
 import tenant_billing_input_category
@@ -65,6 +66,8 @@ def main():
     Process(target=space_energy_output_item.main, args=(logger,)).start()
     # store billing input by energy categories
     Process(target=store_billing_input_category.main, args=(logger,)).start()
+    # store billing input by energy items
+    Process(target=store_billing_input_item.main, args=(logger,)).start()
     # store energy input by energy categories
     Process(target=store_energy_input_category.main, args=(logger,)).start()
     # store energy input by energy items
