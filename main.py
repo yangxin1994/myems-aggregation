@@ -2,10 +2,12 @@ import logging
 from logging.handlers import RotatingFileHandler
 from multiprocessing import Process
 
+import equipment_billing_input_category
 import equipment_energy_input_category
 import equipment_energy_input_item
 import equipment_energy_output_category
 import equipment_energy_output_item
+import space_billing_input_category
 import space_energy_input_category
 import space_energy_input_item
 import space_energy_output_category
@@ -33,6 +35,8 @@ def main():
     # add the handlers to logger
     logger.addHandler(fh)
 
+    # equipment billing input by energy categories
+    Process(target=equipment_billing_input_category.main, args=(logger,)).start()
     # equipment energy input by energy categories
     Process(target=equipment_energy_input_category.main, args=(logger,)).start()
     # equipment energy input by energy items
@@ -41,6 +45,8 @@ def main():
     Process(target=equipment_energy_output_category.main, args=(logger,)).start()
     # equipment energy output by energy items
     Process(target=equipment_energy_output_item.main, args=(logger,)).start()
+    # space billing input by energy categories
+    Process(target=space_billing_input_category.main, args=(logger,)).start()
     # space energy input by energy categories
     Process(target=space_energy_input_category.main, args=(logger,)).start()
     # space energy input by energy items
