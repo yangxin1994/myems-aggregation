@@ -9,6 +9,7 @@ import equipment_energy_input_item
 import equipment_energy_output_category
 import equipment_energy_output_item
 import space_billing_input_category
+import space_billing_input_item
 import space_energy_input_category
 import space_energy_input_item
 import space_energy_output_category
@@ -52,6 +53,8 @@ def main():
     Process(target=equipment_energy_output_item.main, args=(logger,)).start()
     # space billing input by energy categories
     Process(target=space_billing_input_category.main, args=(logger,)).start()
+    # space billing input by energy items
+    Process(target=space_billing_input_item.main, args=(logger,)).start()
     # space energy input by energy categories
     Process(target=space_energy_input_category.main, args=(logger,)).start()
     # space energy input by energy items
