@@ -191,10 +191,10 @@ def main(logger):
             print("Step 4: get tariffs")
             tariff_dict = dict()
             for energy_category_id in energy_category_list:
-                tariff_dict[energy_category_id] = tariff.get_tariffs(space['cost_center_id'],
-                                                                     energy_category_id,
-                                                                     start_datetime_utc,
-                                                                     end_datetime_utc)
+                tariff_dict[energy_category_id] = tariff.get_energy_category_tariffs(space['cost_center_id'],
+                                                                                     energy_category_id,
+                                                                                     start_datetime_utc,
+                                                                                     end_datetime_utc)
             ############################################################################################################
             # Step 5: calculate billing by multiplying energy with tariff
             ############################################################################################################

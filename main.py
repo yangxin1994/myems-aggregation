@@ -3,6 +3,7 @@ from logging.handlers import RotatingFileHandler
 from multiprocessing import Process
 
 import equipment_billing_input_category
+import equipment_billing_input_item
 import equipment_energy_input_category
 import equipment_energy_input_item
 import equipment_energy_output_category
@@ -39,6 +40,8 @@ def main():
 
     # equipment billing input by energy categories
     Process(target=equipment_billing_input_category.main, args=(logger,)).start()
+    # equipment billing input by energy items
+    Process(target=equipment_billing_input_item.main, args=(logger,)).start()
     # equipment energy input by energy categories
     Process(target=equipment_energy_input_category.main, args=(logger,)).start()
     # equipment energy input by energy items
