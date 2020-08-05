@@ -91,21 +91,23 @@ def main(logger):
 #   Step 1: get all input meters associated with the space
 #   Step 2: get all input virtual meters associated with the space
 #   Step 3: get all input offline meters associated with the space
-#   Step 4: get all equipments associated with the space
-#   Step 5: get all stores associated with the space
-#   Step 6: get all tenants associated with the space
-#   Step 7: get all child spaces associated with the space
-#   Step 8: determine start datetime and end datetime to aggregate
-#   Step 9: for each meter in list, get energy input data from energy database
-#   Step 10: for each virtual meter in list, get energy input data from energy database
-#   Step 11: for each offline meter in list, get energy input data from energy database
-#   Step 12: for each equipment in list, get energy input data from energy database
-#   Step 13: for each store in list, get energy input data from energy database
-#   Step 14: for each tenant in list, get energy input data from energy database
-#   Step 15: for each child space in list, get energy input data from energy database
-#   Step 16: determine common time slot to aggregate
-#   Step 17: aggregate energy data in the common time slot by energy items and hourly
-#   Step 18: save energy data to energy database
+#   Step 4: get all combined equipments associated with the space
+#   Step 5: get all equipments associated with the space
+#   Step 6: get all stores associated with the space
+#   Step 7: get all tenants associated with the space
+#   Step 8: get all child spaces associated with the space
+#   Step 9: determine start datetime and end datetime to aggregate
+#   Step 10: for each meter in list, get energy input data from energy database
+#   Step 11: for each virtual meter in list, get energy input data from energy database
+#   Step 12: for each offline meter in list, get energy input data from energy database
+#   Step 13: for each combined equipment in list, get energy input data from energy database
+#   Step 14: for each equipment in list, get energy input data from energy database
+#   Step 15: for each store in list, get energy input data from energy database
+#   Step 16: for each tenant in list, get energy input data from energy database
+#   Step 17: for each child space in list, get energy input data from energy database
+#   Step 18: determine common time slot to aggregate
+#   Step 19: aggregate energy data in the common time slot by energy items and hourly
+#   Step 20: save energy data to energy database
 #
 # NOTE: returns None or the error string because that the logger object cannot be passed in as parameter
 ########################################################################################################################
@@ -221,9 +223,40 @@ def worker(space):
             cnx_system_db.close()
 
     ####################################################################################################################
-    # Step 4: get all equipments associated with the space
+    # Step 4: get all combined equipments associated with the space
     ####################################################################################################################
-    print("Step 4: get all equipments associated with the space")
+    print("Step 4: get all combined equipments associated with the space")
+
+    combined_equipment_list = list()
+
+    try:
+        cursor_system_db.execute(" SELECT e.id, e.name "
+                                 " FROM tbl_combined_equipments e, tbl_spaces_combined_equipments se "
+                                 " WHERE e.id = se.combined_equipment_id "
+                                 "       AND e.is_input_counted = true "
+                                 "       AND se.space_id = %s ",
+                                 (space['id'],))
+        rows_combined_equipments = cursor_system_db.fetchall()
+
+        if rows_combined_equipments is not None and len(rows_combined_equipments) > 0:
+            for row in rows_combined_equipments:
+                combined_equipment_list.append({"id": row[0],
+                                                "name": row[1]})
+
+    except Exception as e:
+        error_string = "Error in step 4 of space_energy_input_item.worker " + str(e)
+        print(error_string)
+        return error_string
+    finally:
+        if cursor_system_db:
+            cursor_system_db.close()
+        if cnx_system_db:
+            cnx_system_db.close()
+
+    ####################################################################################################################
+    # Step 5: get all equipments associated with the space
+    ####################################################################################################################
+    print("Step 5: get all equipments associated with the space")
 
     equipment_list = list()
 
@@ -242,7 +275,7 @@ def worker(space):
                                        "name": row[1]})
 
     except Exception as e:
-        error_string = "Error in step 4 of space_energy_input_item.worker " + str(e)
+        error_string = "Error in step 5 of space_energy_input_item.worker " + str(e)
         print(error_string)
         return error_string
     finally:
@@ -252,9 +285,9 @@ def worker(space):
             cnx_system_db.close()
 
     ####################################################################################################################
-    # Step 5: get all stores associated with the space
+    # Step 6: get all stores associated with the space
     ####################################################################################################################
-    print("Step 5: get all stores associated with the space")
+    print("Step 6: get all stores associated with the space")
 
     store_list = list()
 
@@ -273,7 +306,7 @@ def worker(space):
                                    "name": row[1]})
 
     except Exception as e:
-        error_string = "Error in step 5 of space_energy_input_item.worker " + str(e)
+        error_string = "Error in step 6 of space_energy_input_item.worker " + str(e)
         print(error_string)
         return error_string
     finally:
@@ -283,9 +316,9 @@ def worker(space):
             cnx_system_db.close()
 
     ####################################################################################################################
-    # Step 6: get all tenants associated with the space
+    # Step 7: get all tenants associated with the space
     ####################################################################################################################
-    print("Step 6: get all tenants associated with the space")
+    print("Step 7: get all tenants associated with the space")
 
     tenant_list = list()
 
@@ -304,7 +337,7 @@ def worker(space):
                                     "name": row[1]})
 
     except Exception as e:
-        error_string = "Error in step 6 of space_energy_input_item.worker " + str(e)
+        error_string = "Error in step 7 of space_energy_input_item.worker " + str(e)
         print(error_string)
         return error_string
     finally:
@@ -314,9 +347,9 @@ def worker(space):
             cnx_system_db.close()
 
     ####################################################################################################################
-    # Step 7: get all child spaces associated with the space
+    # Step 8: get all child spaces associated with the space
     ####################################################################################################################
-    print("Step 7: get all child spaces associated with the space")
+    print("Step 8: get all child spaces associated with the space")
 
     child_space_list = list()
 
@@ -334,7 +367,7 @@ def worker(space):
                                          "name": row[1]})
 
     except Exception as e:
-        error_string = "Error in step 7 of space_energy_input_item.worker " + str(e)
+        error_string = "Error in step 8 of space_energy_input_item.worker " + str(e)
         print(error_string)
         return error_string
     finally:
@@ -346,6 +379,7 @@ def worker(space):
     if (meter_list is None or len(meter_list) == 0) and \
             (virtual_meter_list is None or len(virtual_meter_list) == 0) and \
             (offline_meter_list is None or len(offline_meter_list) == 0) and \
+            (combined_equipment_list is None or len(combined_equipment_list) == 0) and \
             (equipment_list is None or len(equipment_list) == 0) and \
             (store_list is None or len(store_list) == 0) and \
             (tenant_list is None or len(tenant_list) == 0) and \
@@ -354,16 +388,16 @@ def worker(space):
         return None
 
     ####################################################################################################################
-    # Step 8: determine start datetime and end datetime to aggregate
+    # Step 9: determine start datetime and end datetime to aggregate
     ####################################################################################################################
-    print("Step 8: determine start datetime and end datetime to aggregate")
+    print("Step 9: determine start datetime and end datetime to aggregate")
     cnx_energy_db = None
     cursor_energy_db = None
     try:
         cnx_energy_db = mysql.connector.connect(**config.myems_energy_db)
         cursor_energy_db = cnx_energy_db.cursor()
     except Exception as e:
-        error_string = "Error in step 8.1 of space_energy_input_item.worker " + str(e)
+        error_string = "Error in step 9.1 of space_energy_input_item.worker " + str(e)
         if cursor_energy_db:
             cursor_energy_db.close()
         if cnx_energy_db:
@@ -393,7 +427,7 @@ def worker(space):
               + "end_datetime_utc: " + end_datetime_utc.isoformat())
 
     except Exception as e:
-        error_string = "Error in step 8.2 of space_energy_input_item.worker " + str(e)
+        error_string = "Error in step 9.2 of space_energy_input_item.worker " + str(e)
         if cursor_energy_db:
             cursor_energy_db.close()
         if cnx_energy_db:
@@ -402,7 +436,7 @@ def worker(space):
         return error_string
 
     ####################################################################################################################
-    # Step 9: for each meter in list, get energy input data from energy database
+    # Step 10: for each meter in list, get energy input data from energy database
     ####################################################################################################################
     energy_meter_hourly = dict()
     try:
@@ -425,7 +459,7 @@ def worker(space):
                     for row_energy_value in rows_energy_values:
                         energy_meter_hourly[meter_id][row_energy_value[0]] = row_energy_value[1]
     except Exception as e:
-        error_string = "Error in step 9 of space_energy_input_item.worker " + str(e)
+        error_string = "Error in step 10 of space_energy_input_item.worker " + str(e)
         if cursor_energy_db:
             cursor_energy_db.close()
         if cnx_energy_db:
@@ -434,7 +468,7 @@ def worker(space):
         return error_string
 
     ####################################################################################################################
-    # Step 10: for each virtual meter in list, get energy input data from energy database
+    # Step 11: for each virtual meter in list, get energy input data from energy database
     ####################################################################################################################
     energy_virtual_meter_hourly = dict()
     if virtual_meter_list is not None and len(virtual_meter_list) > 0:
@@ -457,7 +491,7 @@ def worker(space):
                     for row_energy_value in rows_energy_values:
                         energy_virtual_meter_hourly[virtual_meter_id][row_energy_value[0]] = row_energy_value[1]
         except Exception as e:
-            error_string = "Error in step 10 of space_energy_input_item.worker " + str(e)
+            error_string = "Error in step 11 of space_energy_input_item.worker " + str(e)
             if cursor_energy_db:
                 cursor_energy_db.close()
             if cnx_energy_db:
@@ -466,7 +500,7 @@ def worker(space):
             return error_string
 
     ####################################################################################################################
-    # Step 11: for each offline meter in list, get energy input data from energy database
+    # Step 12: for each offline meter in list, get energy input data from energy database
     ####################################################################################################################
     energy_offline_meter_hourly = dict()
     if offline_meter_list is not None and len(offline_meter_list) > 0:
@@ -490,7 +524,7 @@ def worker(space):
                         energy_offline_meter_hourly[offline_meter_id][row_energy_value[0]] = row_energy_value[1]
 
         except Exception as e:
-            error_string = "Error in step 11 of space_energy_input_item.worker " + str(e)
+            error_string = "Error in step 12 of space_energy_input_item.worker " + str(e)
             if cursor_energy_db:
                 cursor_energy_db.close()
             if cnx_energy_db:
@@ -499,7 +533,44 @@ def worker(space):
             return error_string
 
     ####################################################################################################################
-    # Step 12: for each equipment in list, get energy input data from energy database
+    # Step 13: for each combined equipment in list, get energy input data from energy database
+    ####################################################################################################################
+    energy_combined_equipment_hourly = dict()
+    if combined_equipment_list is not None and len(combined_equipment_list) > 0:
+        try:
+            for combined_equipment in combined_equipment_list:
+                combined_equipment_id = str(combined_equipment['id'])
+                query = (" SELECT start_datetime_utc, energy_item_id, actual_value "
+                         " FROM tbl_combined_equipment_input_item_hourly "
+                         " WHERE combined_equipment_id = %s "
+                         "       AND start_datetime_utc >= %s "
+                         "       AND start_datetime_utc < %s "
+                         " ORDER BY start_datetime_utc ")
+                cursor_energy_db.execute(query, (combined_equipment_id, start_datetime_utc, end_datetime_utc,))
+                rows_energy_values = cursor_energy_db.fetchall()
+                if rows_energy_values is None or len(rows_energy_values) == 0:
+                    energy_combined_equipment_hourly[combined_equipment_id] = None
+                else:
+                    energy_combined_equipment_hourly[combined_equipment_id] = dict()
+                    for row_value in rows_energy_values:
+                        current_datetime_utc = row_value[0]
+                        if current_datetime_utc not in energy_combined_equipment_hourly[combined_equipment_id]:
+                            energy_combined_equipment_hourly[combined_equipment_id][current_datetime_utc] = dict()
+                        energy_item_id = row_value[1]
+                        actual_value = row_value[2]
+                        energy_combined_equipment_hourly[combined_equipment_id][current_datetime_utc][energy_item_id] = \
+                            actual_value
+        except Exception as e:
+            error_string = "Error in step 13 of space_energy_input_item.worker " + str(e)
+            if cursor_energy_db:
+                cursor_energy_db.close()
+            if cnx_energy_db:
+                cnx_energy_db.close()
+            print(error_string)
+            return error_string
+
+    ####################################################################################################################
+    # Step 14: for each equipment in list, get energy input data from energy database
     ####################################################################################################################
     energy_equipment_hourly = dict()
     if equipment_list is not None and len(equipment_list) > 0:
@@ -527,7 +598,7 @@ def worker(space):
                         energy_equipment_hourly[equipment_id][current_datetime_utc][energy_item_id] = \
                             actual_value
         except Exception as e:
-            error_string = "Error in step 12 of space_energy_input_item.worker " + str(e)
+            error_string = "Error in step 14 of space_energy_input_item.worker " + str(e)
             if cursor_energy_db:
                 cursor_energy_db.close()
             if cnx_energy_db:
@@ -536,7 +607,7 @@ def worker(space):
             return error_string
 
     ####################################################################################################################
-    # Step 13: for each store in list, get energy input data from energy database
+    # Step 15: for each store in list, get energy input data from energy database
     ####################################################################################################################
     energy_store_hourly = dict()
     if store_list is not None and len(store_list) > 0:
@@ -564,15 +635,16 @@ def worker(space):
                         actual_value = row_energy_value[2]
                         energy_store_hourly[store_id][current_datetime_utc][energy_item_id] = actual_value
         except Exception as e:
-            error_string = "Error in step 13 of space_energy_input_item.worker " + str(e)
+            error_string = "Error in step 15 of space_energy_input_item.worker " + str(e)
             if cursor_energy_db:
                 cursor_energy_db.close()
             if cnx_energy_db:
                 cnx_energy_db.close()
             print(error_string)
             return error_string
+
     ####################################################################################################################
-    # Step 14: for each tenant in list, get energy input data from energy database
+    # Step 16: for each tenant in list, get energy input data from energy database
     ####################################################################################################################
     energy_tenant_hourly = dict()
     if tenant_list is not None and len(tenant_list) > 0:
@@ -600,15 +672,16 @@ def worker(space):
                         actual_value = row_energy_value[2]
                         energy_tenant_hourly[tenant_id][current_datetime_utc][energy_item_id] = actual_value
         except Exception as e:
-            error_string = "Error in step 14 of space_energy_input_item.worker " + str(e)
+            error_string = "Error in step 16 of space_energy_input_item.worker " + str(e)
             if cursor_energy_db:
                 cursor_energy_db.close()
             if cnx_energy_db:
                 cnx_energy_db.close()
             print(error_string)
             return error_string
+
     ####################################################################################################################
-    # Step 15: for each child space in list, get energy input data from energy database
+    # Step 17: for each child space in list, get energy input data from energy database
     ####################################################################################################################
     energy_child_space_hourly = dict()
     if child_space_list is not None and len(child_space_list) > 0:
@@ -636,7 +709,7 @@ def worker(space):
                         actual_value = row_energy_value[2]
                         energy_child_space_hourly[child_space_id][current_datetime_utc][energy_item_id] = actual_value
         except Exception as e:
-            error_string = "Error in step 15 of space_energy_input_item.worker " + str(e)
+            error_string = "Error in step 17 of space_energy_input_item.worker " + str(e)
             if cursor_energy_db:
                 cursor_energy_db.close()
             if cnx_energy_db:
@@ -645,7 +718,7 @@ def worker(space):
             return error_string
 
     ####################################################################################################################
-    # Step 16: determine common time slot to aggregate
+    # Step 18: determine common time slot to aggregate
     ####################################################################################################################
 
     common_start_datetime_utc = start_datetime_utc
@@ -692,7 +765,21 @@ def worker(space):
                     if common_end_datetime_utc > max(energy_hourly.keys()):
                         common_end_datetime_utc = max(energy_hourly.keys())
 
-    print("Getting common time slot of energy values for all equipments...")
+    print("Getting common time slot of energy values for all combined equipments")
+    if common_start_datetime_utc is not None and common_start_datetime_utc is not None:
+        if energy_combined_equipment_hourly is not None and len(energy_combined_equipment_hourly) > 0:
+            for combined_equipment_id, energy_hourly in energy_combined_equipment_hourly.items():
+                if energy_hourly is None or len(energy_hourly) == 0:
+                    common_start_datetime_utc = None
+                    common_end_datetime_utc = None
+                    break
+                else:
+                    if common_start_datetime_utc < min(energy_hourly.keys()):
+                        common_start_datetime_utc = min(energy_hourly.keys())
+                    if common_end_datetime_utc > max(energy_hourly.keys()):
+                        common_end_datetime_utc = max(energy_hourly.keys())
+
+    print("Getting common time slot of energy values for all equipments")
     if common_start_datetime_utc is not None and common_start_datetime_utc is not None:
         if energy_equipment_hourly is not None and len(energy_equipment_hourly) > 0:
             for equipment_id, energy_hourly in energy_equipment_hourly.items():
@@ -706,7 +793,7 @@ def worker(space):
                     if common_end_datetime_utc > max(energy_hourly.keys()):
                         common_end_datetime_utc = max(energy_hourly.keys())
 
-    print("Getting common time slot of energy values for all stores...")
+    print("Getting common time slot of energy values for all stores")
     if common_start_datetime_utc is not None and common_start_datetime_utc is not None:
         if energy_store_hourly is not None and len(energy_store_hourly) > 0:
             for store_id, energy_hourly in energy_store_hourly.items():
@@ -720,7 +807,7 @@ def worker(space):
                     if common_end_datetime_utc > max(energy_hourly.keys()):
                         common_end_datetime_utc = max(energy_hourly.keys())
 
-    print("Getting common time slot of energy values for all tenants...")
+    print("Getting common time slot of energy values for all tenants")
     if common_start_datetime_utc is not None and common_start_datetime_utc is not None:
         if energy_tenant_hourly is not None and len(energy_tenant_hourly) > 0:
             for tenant_id, energy_hourly in energy_tenant_hourly.items():
@@ -734,7 +821,7 @@ def worker(space):
                     if common_end_datetime_utc > max(energy_hourly.keys()):
                         common_end_datetime_utc = max(energy_hourly.keys())
 
-    print("Getting common time slot of energy values for all child spaces...")
+    print("Getting common time slot of energy values for all child spaces")
     if common_start_datetime_utc is not None and common_start_datetime_utc is not None:
         if energy_child_space_hourly is not None and len(energy_child_space_hourly) > 0:
             for child_space_id, energy_hourly in energy_child_space_hourly.items():
@@ -751,6 +838,7 @@ def worker(space):
     if (energy_meter_hourly is None or len(energy_meter_hourly) == 0) and \
             (energy_virtual_meter_hourly is None or len(energy_virtual_meter_hourly) == 0) and \
             (energy_offline_meter_hourly is None or len(energy_offline_meter_hourly) == 0) and \
+            (energy_combined_equipment_hourly is None or len(energy_combined_equipment_hourly) == 0) and \
             (energy_equipment_hourly is None or len(energy_equipment_hourly) == 0) and \
             (energy_store_hourly is None or len(energy_store_hourly) == 0) and \
             (energy_tenant_hourly is None or len(energy_tenant_hourly) == 0) and \
@@ -769,10 +857,10 @@ def worker(space):
     print("common_end_datetime_utc: " + str(common_end_datetime_utc))
 
     ####################################################################################################################
-    # Step 17: aggregate energy data in the common time slot by energy items and hourly
+    # Step 19: aggregate energy data in the common time slot by energy items and hourly
     ####################################################################################################################
 
-    print("Step 17: aggregate energy data in the common time slot by energy items and hourly")
+    print("Step 19: aggregate energy data in the common time slot by energy items and hourly")
     aggregated_values = list()
     try:
         current_datetime_utc = common_start_datetime_utc
@@ -806,6 +894,16 @@ def worker(space):
                     actual_value = energy_offline_meter_hourly[offline_meter_id].get(current_datetime_utc, 0.0)
                     aggregated_value['meta_data'][energy_item_id] = \
                         aggregated_value['meta_data'].get(energy_item_id, 0.0) + actual_value
+
+            if combined_equipment_list is not None and len(combined_equipment_list) > 0:
+                for combined_equipment in combined_equipment_list:
+                    combined_equipment_id = str(combined_equipment['id'])
+                    meta_data_dict = \
+                        energy_combined_equipment_hourly[combined_equipment_id].get(current_datetime_utc, None)
+                    if meta_data_dict is not None and len(meta_data_dict) > 0:
+                        for energy_item_id, actual_value in meta_data_dict.items():
+                            aggregated_value['meta_data'][energy_item_id] = \
+                                aggregated_value['meta_data'].get(energy_item_id, 0.0) + actual_value
 
             if equipment_list is not None and len(equipment_list) > 0:
                 for equipment in equipment_list:
@@ -848,7 +946,7 @@ def worker(space):
             current_datetime_utc += timedelta(minutes=config.minutes_to_count)
 
     except Exception as e:
-        error_string = "Error in step 17 of space_energy_input_item.worker " + str(e)
+        error_string = "Error in step 19 of space_energy_input_item.worker " + str(e)
         if cursor_energy_db:
             cursor_energy_db.close()
         if cnx_energy_db:
@@ -857,9 +955,9 @@ def worker(space):
         return error_string
 
     ####################################################################################################################
-    # Step 18: save energy data to energy database
+    # Step 20: save energy data to energy database
     ####################################################################################################################
-    print("Step 18: save energy data to energy database")
+    print("Step 20: save energy data to energy database")
 
     if len(aggregated_values) > 0:
         try:
@@ -882,7 +980,7 @@ def worker(space):
             cnx_energy_db.commit()
 
         except Exception as e:
-            error_string = "Error in step 18 of space_energy_input_item.worker " + str(e)
+            error_string = "Error in step 20 of space_energy_input_item.worker " + str(e)
             print(error_string)
             return error_string
         finally:
