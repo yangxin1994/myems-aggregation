@@ -2,27 +2,40 @@ import logging
 from logging.handlers import RotatingFileHandler
 from multiprocessing import Process
 
+
+import combined_equipment_energy_input_category
+import combined_equipment_energy_input_item
+import combined_equipment_energy_output_category
+
 import combined_equipment_billing_input_category
 import combined_equipment_billing_input_item
 import combined_equipment_billing_output_category
-import equipment_billing_input_category
-import equipment_billing_input_item
-import equipment_billing_output_category
+
 import equipment_energy_input_category
 import equipment_energy_input_item
 import equipment_energy_output_category
+
+import equipment_billing_input_category
+import equipment_billing_input_item
+import equipment_billing_output_category
+
 import space_billing_input_category
 import space_billing_input_item
 import space_billing_output_category
+
 import space_energy_input_category
 import space_energy_input_item
 import space_energy_output_category
+
 import store_billing_input_category
 import store_billing_input_item
+
 import store_energy_input_category
 import store_energy_input_item
+
 import tenant_billing_input_category
 import tenant_billing_input_item
+
 import tenant_energy_input_category
 import tenant_energy_input_item
 
@@ -43,6 +56,13 @@ def main():
     fh.setFormatter(formatter)
     # add the handlers to logger
     logger.addHandler(fh)
+
+    # combined equipment energy input by energy categories
+    Process(target=combined_equipment_energy_input_category.main, args=(logger,)).start()
+    # combined equipment energy input by energy items
+    Process(target=combined_equipment_energy_input_item.main, args=(logger,)).start()
+    # combined equipment energy output by energy categories
+    Process(target=combined_equipment_energy_output_category.main, args=(logger,)).start()
 
     # combined equipment billing input by energy categories
     Process(target=combined_equipment_billing_input_category.main, args=(logger,)).start()
