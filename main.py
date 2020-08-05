@@ -19,6 +19,12 @@ import equipment_billing_input_category
 import equipment_billing_input_item
 import equipment_billing_output_category
 
+import shopfloor_billing_input_category
+import shopfloor_billing_input_item
+
+import shopfloor_energy_input_category
+import shopfloor_energy_input_item
+
 import space_billing_input_category
 import space_billing_input_item
 import space_billing_output_category
@@ -84,6 +90,16 @@ def main():
     Process(target=equipment_energy_input_item.main, args=(logger,)).start()
     # equipment energy output by energy categories
     Process(target=equipment_energy_output_category.main, args=(logger,)).start()
+
+    # shopfloor billing input by energy categories
+    Process(target=shopfloor_billing_input_category.main, args=(logger,)).start()
+    # shopfloor billing input by energy items
+    Process(target=shopfloor_billing_input_item.main, args=(logger,)).start()
+
+    # shopfloor energy input by energy categories
+    Process(target=shopfloor_energy_input_category.main, args=(logger,)).start()
+    # shopfloor energy input by energy items
+    Process(target=shopfloor_energy_input_item.main, args=(logger,)).start()
 
     # space billing input by energy categories
     Process(target=space_billing_input_category.main, args=(logger,)).start()
