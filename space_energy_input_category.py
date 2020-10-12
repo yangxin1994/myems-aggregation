@@ -1,5 +1,6 @@
 import time
 from datetime import datetime, timedelta
+from decimal import Decimal
 import mysql.connector
 from multiprocessing import Pool
 import random
@@ -589,8 +590,7 @@ def worker(space):
                             energy_combined_equipment_hourly[combined_equipment_id][current_datetime_utc] = dict()
                         energy_category_id = row_value[1]
                         actual_value = row_value[2]
-                        energy_combined_equipment_hourly[combined_equipment_id][current_datetime_utc][energy_category_id] = \
-                            actual_value
+                        energy_combined_equipment_hourly[combined_equipment_id][current_datetime_utc][energy_category_id] = actual_value
         except Exception as e:
             error_string = "Error in step 14 of space_energy_input_category.worker " + str(e)
             if cursor_energy_db:
@@ -958,25 +958,25 @@ def worker(space):
                 for meter in meter_list:
                     meter_id = str(meter['id'])
                     energy_category_id = meter['energy_category_id']
-                    actual_value = energy_meter_hourly[meter_id].get(current_datetime_utc, 0.0)
+                    actual_value = energy_meter_hourly[meter_id].get(current_datetime_utc, Decimal(0.0))
                     aggregated_value['meta_data'][energy_category_id] = \
-                        aggregated_value['meta_data'].get(energy_category_id, 0.0) + actual_value
+                        aggregated_value['meta_data'].get(energy_category_id, Decimal(0.0)) + actual_value
 
             if virtual_meter_list is not None and len(virtual_meter_list) > 0:
                 for virtual_meter in virtual_meter_list:
                     virtual_meter_id = str(virtual_meter['id'])
                     energy_category_id = virtual_meter['energy_category_id']
-                    actual_value = energy_virtual_meter_hourly[virtual_meter_id].get(current_datetime_utc, 0.0)
+                    actual_value = energy_virtual_meter_hourly[virtual_meter_id].get(current_datetime_utc, Decimal(0.0))
                     aggregated_value['meta_data'][energy_category_id] = \
-                        aggregated_value['meta_data'].get(energy_category_id, 0.0) + actual_value
+                        aggregated_value['meta_data'].get(energy_category_id, Decimal(0.0)) + actual_value
 
             if offline_meter_list is not None and len(offline_meter_list) > 0:
                 for offline_meter in offline_meter_list:
                     offline_meter_id = str(offline_meter['id'])
                     energy_category_id = offline_meter['energy_category_id']
-                    actual_value = energy_offline_meter_hourly[offline_meter_id].get(current_datetime_utc, 0.0)
+                    actual_value = energy_offline_meter_hourly[offline_meter_id].get(current_datetime_utc, Decimal(0.0))
                     aggregated_value['meta_data'][energy_category_id] = \
-                        aggregated_value['meta_data'].get(energy_category_id, 0.0) + actual_value
+                        aggregated_value['meta_data'].get(energy_category_id, Decimal(0.0)) + actual_value
 
             if combined_equipment_list is not None and len(combined_equipment_list) > 0:
                 for combined_equipment in combined_equipment_list:
@@ -986,7 +986,7 @@ def worker(space):
                     if meta_data_dict is not None and len(meta_data_dict) > 0:
                         for energy_category_id, actual_value in meta_data_dict.items():
                             aggregated_value['meta_data'][energy_category_id] = \
-                                aggregated_value['meta_data'].get(energy_category_id, 0.0) + actual_value
+                                aggregated_value['meta_data'].get(energy_category_id, Decimal(0.0)) + actual_value
 
             if equipment_list is not None and len(equipment_list) > 0:
                 for equipment in equipment_list:
@@ -995,7 +995,7 @@ def worker(space):
                     if meta_data_dict is not None and len(meta_data_dict) > 0:
                         for energy_category_id, actual_value in meta_data_dict.items():
                             aggregated_value['meta_data'][energy_category_id] = \
-                                aggregated_value['meta_data'].get(energy_category_id, 0.0) + actual_value
+                                aggregated_value['meta_data'].get(energy_category_id, Decimal(0.0)) + actual_value
 
             if shopfloor_list is not None and len(shopfloor_list) > 0:
                 for shopfloor in shopfloor_list:
@@ -1004,7 +1004,7 @@ def worker(space):
                     if meta_data_dict is not None and len(meta_data_dict) > 0:
                         for energy_category_id, actual_value in meta_data_dict.items():
                             aggregated_value['meta_data'][energy_category_id] = \
-                                aggregated_value['meta_data'].get(energy_category_id, 0.0) + actual_value
+                                aggregated_value['meta_data'].get(energy_category_id, Decimal(0.0)) + actual_value
 
             if store_list is not None and len(store_list) > 0:
                 for store in store_list:
@@ -1013,7 +1013,7 @@ def worker(space):
                     if meta_data_dict is not None and len(meta_data_dict) > 0:
                         for energy_category_id, actual_value in meta_data_dict.items():
                             aggregated_value['meta_data'][energy_category_id] = \
-                                aggregated_value['meta_data'].get(energy_category_id, 0.0) + actual_value
+                                aggregated_value['meta_data'].get(energy_category_id, Decimal(0.0)) + actual_value
 
             if tenant_list is not None and len(tenant_list) > 0:
                 for tenant in tenant_list:
@@ -1022,7 +1022,7 @@ def worker(space):
                     if meta_data_dict is not None and len(meta_data_dict) > 0:
                         for energy_category_id, actual_value in meta_data_dict.items():
                             aggregated_value['meta_data'][energy_category_id] = \
-                                aggregated_value['meta_data'].get(energy_category_id, 0.0) + actual_value
+                                aggregated_value['meta_data'].get(energy_category_id, Decimal(0.0)) + actual_value
 
             if child_space_list is not None and len(child_space_list) > 0:
                 for child_space in child_space_list:
@@ -1031,7 +1031,7 @@ def worker(space):
                     if meta_data_dict is not None and len(meta_data_dict) > 0:
                         for energy_category_id, actual_value in meta_data_dict.items():
                             aggregated_value['meta_data'][energy_category_id] = \
-                                aggregated_value['meta_data'].get(energy_category_id, 0.0) + actual_value
+                                aggregated_value['meta_data'].get(energy_category_id, Decimal(0.0)) + actual_value
 
             aggregated_values.append(aggregated_value)
 
