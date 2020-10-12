@@ -217,13 +217,12 @@ def worker(space):
 
     except Exception as e:
         error_string = "Error in step 3 of space_energy_input_item.worker " + str(e)
-        print(error_string)
-        return error_string
-    finally:
         if cursor_system_db:
             cursor_system_db.close()
         if cnx_system_db:
             cnx_system_db.close()
+        print(error_string)
+        return error_string
 
     ####################################################################################################################
     # Step 4: get all combined equipments associated with the space
@@ -248,13 +247,12 @@ def worker(space):
 
     except Exception as e:
         error_string = "Error in step 4 of space_energy_input_item.worker " + str(e)
-        print(error_string)
-        return error_string
-    finally:
         if cursor_system_db:
             cursor_system_db.close()
         if cnx_system_db:
             cnx_system_db.close()
+        print(error_string)
+        return error_string
 
     ####################################################################################################################
     # Step 5: get all equipments associated with the space
@@ -279,13 +277,12 @@ def worker(space):
 
     except Exception as e:
         error_string = "Error in step 5 of space_energy_input_item.worker " + str(e)
-        print(error_string)
-        return error_string
-    finally:
         if cursor_system_db:
             cursor_system_db.close()
         if cnx_system_db:
             cnx_system_db.close()
+        print(error_string)
+        return error_string
 
     ####################################################################################################################
     # Step 6: get all shopfloors associated with the space
@@ -310,13 +307,12 @@ def worker(space):
 
     except Exception as e:
         error_string = "Error in step 6 of space_energy_input_item.worker " + str(e)
-        print(error_string)
-        return error_string
-    finally:
         if cursor_system_db:
             cursor_system_db.close()
         if cnx_system_db:
             cnx_system_db.close()
+        print(error_string)
+        return error_string
 
     ####################################################################################################################
     # Step 7: get all stores associated with the space
@@ -341,13 +337,12 @@ def worker(space):
 
     except Exception as e:
         error_string = "Error in step 7 of space_energy_input_item.worker " + str(e)
-        print(error_string)
-        return error_string
-    finally:
         if cursor_system_db:
             cursor_system_db.close()
         if cnx_system_db:
             cnx_system_db.close()
+        print(error_string)
+        return error_string
 
     ####################################################################################################################
     # Step 8: get all tenants associated with the space
@@ -372,13 +367,12 @@ def worker(space):
 
     except Exception as e:
         error_string = "Error in step 8 of space_energy_input_item.worker " + str(e)
-        print(error_string)
-        return error_string
-    finally:
         if cursor_system_db:
             cursor_system_db.close()
         if cnx_system_db:
             cnx_system_db.close()
+        print(error_string)
+        return error_string
 
     ####################################################################################################################
     # Step 9: get all child spaces associated with the space

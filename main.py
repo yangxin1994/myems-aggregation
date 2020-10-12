@@ -19,6 +19,8 @@ import equipment_billing_input_category
 import equipment_billing_input_item
 import equipment_billing_output_category
 
+import meter_billing
+
 import shopfloor_billing_input_category
 import shopfloor_billing_input_item
 
@@ -90,6 +92,9 @@ def main():
     Process(target=equipment_energy_input_item.main, args=(logger,)).start()
     # equipment energy output by energy categories
     Process(target=equipment_energy_output_category.main, args=(logger,)).start()
+
+    # meter billing
+    Process(target=meter_billing.main, args=(logger,)).start()
 
     # shopfloor billing input by energy categories
     Process(target=shopfloor_billing_input_category.main, args=(logger,)).start()
