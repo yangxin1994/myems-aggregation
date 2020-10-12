@@ -1,5 +1,6 @@
 import time
 from datetime import datetime, timedelta
+from decimal import Decimal
 import mysql.connector
 from multiprocessing import Pool
 import random
@@ -473,7 +474,7 @@ def worker(space):
                     if meta_data_dict is not None and len(meta_data_dict) > 0:
                         for energy_category_id, actual_value in meta_data_dict.items():
                             aggregated_value['meta_data'][energy_category_id] = \
-                                aggregated_value['meta_data'].get(energy_category_id, 0.0) + actual_value
+                                aggregated_value['meta_data'].get(energy_category_id, Decimal(0.0)) + actual_value
 
             if equipment_list is not None and len(equipment_list) > 0:
                 for equipment in equipment_list:
@@ -482,7 +483,7 @@ def worker(space):
                     if meta_data_dict is not None and len(meta_data_dict) > 0:
                         for energy_category_id, actual_value in meta_data_dict.items():
                             aggregated_value['meta_data'][energy_category_id] = \
-                                aggregated_value['meta_data'].get(energy_category_id, 0.0) + actual_value
+                                aggregated_value['meta_data'].get(energy_category_id, Decimal(0.0)) + actual_value
 
             if child_space_list is not None and len(child_space_list) > 0:
                 for child_space in child_space_list:
@@ -491,7 +492,7 @@ def worker(space):
                     if meta_data_dict is not None and len(meta_data_dict) > 0:
                         for energy_category_id, actual_value in meta_data_dict.items():
                             aggregated_value['meta_data'][energy_category_id] = \
-                                aggregated_value['meta_data'].get(energy_category_id, 0.0) + actual_value
+                                aggregated_value['meta_data'].get(energy_category_id, Decimal(0.0)) + actual_value
 
             aggregated_values.append(aggregated_value)
 

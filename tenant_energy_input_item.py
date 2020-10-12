@@ -1,5 +1,6 @@
 import time
 from datetime import datetime, timedelta
+from decimal import Decimal
 import mysql.connector
 from multiprocessing import Pool
 import random
@@ -449,25 +450,25 @@ def worker(tenant):
                 for meter in meter_list:
                     meter_id = str(meter['id'])
                     energy_item_id = meter['energy_item_id']
-                    actual_value = energy_meter_hourly[meter_id].get(current_datetime_utc, 0.0)
+                    actual_value = energy_meter_hourly[meter_id].get(current_datetime_utc, Decimal(0.0))
                     aggregated_value['meta_data'][energy_item_id] = \
-                        aggregated_value['meta_data'].get(energy_item_id, 0.0) + actual_value
+                        aggregated_value['meta_data'].get(energy_item_id, Decimal(0.0)) + actual_value
 
             if virtual_meter_list is not None and len(virtual_meter_list) > 0:
                 for virtual_meter in virtual_meter_list:
                     virtual_meter_id = str(virtual_meter['id'])
                     energy_item_id = virtual_meter['energy_item_id']
-                    actual_value = energy_virtual_meter_hourly[virtual_meter_id].get(current_datetime_utc, 0.0)
+                    actual_value = energy_virtual_meter_hourly[virtual_meter_id].get(current_datetime_utc, Decimal(0.0))
                     aggregated_value['meta_data'][energy_item_id] = \
-                        aggregated_value['meta_data'].get(energy_item_id, 0.0) + actual_value
+                        aggregated_value['meta_data'].get(energy_item_id, Decimal(0.0)) + actual_value
 
             if offline_meter_list is not None and len(offline_meter_list) > 0:
                 for offline_meter in offline_meter_list:
                     offline_meter_id = str(offline_meter['id'])
                     energy_item_id = offline_meter['energy_item_id']
-                    actual_value = energy_offline_meter_hourly[offline_meter_id].get(current_datetime_utc, 0.0)
+                    actual_value = energy_offline_meter_hourly[offline_meter_id].get(current_datetime_utc, Decimal(0.0))
                     aggregated_value['meta_data'][energy_item_id] = \
-                        aggregated_value['meta_data'].get(energy_item_id, 0.0) + actual_value
+                        aggregated_value['meta_data'].get(energy_item_id, Decimal(0.0)) + actual_value
 
             aggregated_values.append(aggregated_value)
 

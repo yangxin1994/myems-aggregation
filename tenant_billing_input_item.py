@@ -1,6 +1,6 @@
 import time
 from datetime import datetime, timedelta
-
+from decimal import Decimal
 import mysql.connector
 import tariff
 import config
@@ -208,9 +208,9 @@ def main(logger):
                         current_tariff = tariff_dict[energy_item_id].get(current_datetime_utc)
                         current_energy = energy_dict[current_datetime_utc].get(energy_item_id)
                         if current_tariff is not None \
-                                and isinstance(current_tariff, float) \
+                                and isinstance(current_tariff, Decimal) \
                                 and current_energy is not None \
-                                and isinstance(current_energy, float):
+                                and isinstance(current_energy, Decimal):
                             billing_dict[current_datetime_utc][energy_item_id] = \
                                 current_energy * current_tariff
 
@@ -234,7 +234,7 @@ def main(logger):
                     for current_datetime_utc in billing_dict:
                         for energy_item_id in energy_item_list:
                             current_billing = billing_dict[current_datetime_utc].get(energy_item_id)
-                            if current_billing is not None and isinstance(current_billing, float):
+                            if current_billing is not None and isinstance(current_billing, Decimal):
                                 add_values += " (" + str(tenant['id']) + ","
                                 add_values += " " + str(energy_item_id) + ","
                                 add_values += "'" + current_datetime_utc.isoformat()[0:19] + "',"
