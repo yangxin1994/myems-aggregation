@@ -226,7 +226,7 @@ def worker(shopfloor):
                                  " FROM tbl_equipments e, tbl_shopfloors_equipments se "
                                  " WHERE e.id = se.equipment_id "
                                  "       AND e.is_input_counted = true "
-                                 "       AND se.space_id = %s ",
+                                 "       AND se.shopfloor_id = %s ",
                                  (shopfloor['id'],))
         rows_equipments = cursor_system_db.fetchall()
 

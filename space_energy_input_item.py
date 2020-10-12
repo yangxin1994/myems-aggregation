@@ -137,7 +137,7 @@ def worker(space):
 
     meter_list = list()
     try:
-        cursor_system_db.execute(" SELECT m.id, m.name, m.item_id "
+        cursor_system_db.execute(" SELECT m.id, m.name, m.energy_item_id "
                                  " FROM tbl_meters m, tbl_spaces_meters sm "
                                  " WHERE m.id = sm.meter_id "
                                  "       AND m.is_counted = true "
