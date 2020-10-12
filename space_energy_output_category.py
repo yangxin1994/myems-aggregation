@@ -141,32 +141,17 @@ def worker(space):
 
     except Exception as e:
         error_string = "Error in step 1.2 of space_energy_output_category.worker " + str(e)
-        print(error_string)
-        return error_string
-    finally:
         if cursor_system_db:
             cursor_system_db.close()
         if cnx_system_db:
             cnx_system_db.close()
+        print(error_string)
+        return error_string
 
     ####################################################################################################################
     # Step 2: get all equipments associated with the space
     ####################################################################################################################
     print("Step 2: get all equipments associated with the space")
-
-    cnx_system_db = None
-    cursor_system_db = None
-    try:
-        cnx_system_db = mysql.connector.connect(**config.myems_system_db)
-        cursor_system_db = cnx_system_db.cursor()
-    except Exception as e:
-        error_string = "Error in step 2.1 of space_energy_output_category.worker " + str(e)
-        if cursor_system_db:
-            cursor_system_db.close()
-        if cnx_system_db:
-            cnx_system_db.close()
-        print(error_string)
-        return error_string
 
     equipment_list = list()
     try:
@@ -185,13 +170,12 @@ def worker(space):
 
     except Exception as e:
         error_string = "Error in step 2.2 of space_energy_output_category.worker " + str(e)
-        print(error_string)
-        return error_string
-    finally:
         if cursor_system_db:
             cursor_system_db.close()
         if cnx_system_db:
             cnx_system_db.close()
+        print(error_string)
+        return error_string
 
     ####################################################################################################################
     # Step 3: get all child spaces associated with the space
@@ -199,7 +183,6 @@ def worker(space):
     print("Step 3: get all child spaces associated with the space")
 
     child_space_list = list()
-
     try:
         cursor_system_db.execute(" SELECT id, name "
                                  " FROM tbl_spaces "
@@ -223,7 +206,8 @@ def worker(space):
         if cnx_system_db:
             cnx_system_db.close()
 
-    if ((equipment_list is None or len(equipment_list) == 0) and
+    if ((combined_equipment_list is None or len(combined_equipment_list) == 0) and
+            (equipment_list is None or len(equipment_list) == 0) and
             (child_space_list is None or len(child_space_list) == 0)):
         print("This is an empty space ")
         return None
@@ -436,7 +420,8 @@ def worker(space):
                     if common_end_datetime_utc > max(energy_hourly.keys()):
                         common_end_datetime_utc = max(energy_hourly.keys())
 
-    if (energy_equipment_hourly is None or len(energy_equipment_hourly) == 0) and \
+    if (energy_combined_equipment_hourly is None or len(energy_combined_equipment_hourly) == 0) and \
+            (energy_equipment_hourly is None or len(energy_equipment_hourly) == 0) and \
             (energy_child_space_hourly is None or len(energy_child_space_hourly) == 0):
         # There isn't any energy data
         print("There isn't any energy data")

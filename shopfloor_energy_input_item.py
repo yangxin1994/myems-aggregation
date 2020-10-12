@@ -207,13 +207,12 @@ def worker(shopfloor):
 
     except Exception as e:
         error_string = "Error in step 3.1 of shopfloor_energy_input_item.worker " + str(e)
-        print(error_string)
-        return error_string
-    finally:
         if cursor_system_db:
             cursor_system_db.close()
         if cnx_system_db:
             cnx_system_db.close()
+        print(error_string)
+        return error_string
 
     ####################################################################################################################
     # Step 4: get all equipments associated with the shopfloor
