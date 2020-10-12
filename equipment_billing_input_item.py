@@ -145,7 +145,7 @@ def main(logger):
                     # start from the next time slot
                     start_datetime_utc += timedelta(minutes=config.minutes_to_count)
 
-                print("start_datetime_utc: " + start_datetime_utc.isoformat())
+                print("start_datetime_utc: " + start_datetime_utc.isoformat()[0:19])
             except Exception as e:
                 logger.error("Error in step 2 of equipment_billing_input_item " + str(e))
                 # break the for equipment loop
@@ -237,7 +237,7 @@ def main(logger):
                             if current_billing is not None and isinstance(current_billing, float):
                                 add_values += " (" + str(equipment['id']) + ","
                                 add_values += " " + str(energy_item_id) + ","
-                                add_values += "'" + current_datetime_utc.isoformat() + "',"
+                                add_values += "'" + current_datetime_utc.isoformat()[0:19] + "',"
                                 add_values += str(billing_dict[current_datetime_utc][energy_item_id]) + "), "
                     print("add_values:" + add_values)
                     # trim ", " at the end of string and then execute
