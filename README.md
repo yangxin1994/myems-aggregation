@@ -6,7 +6,7 @@
 
 This service is a component of MyEMS and it aggregates normalized data up to multiple dimensions.
 
-
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/myems/myems-aggregation/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/myems/myems-aggregation/?branch=master)
 
 
 ### Prerequisites
